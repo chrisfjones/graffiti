@@ -1,7 +1,5 @@
 package graffiti
 
-import javax.naming.InitialContext
-
 class Server {
 
     def jetty
@@ -12,14 +10,14 @@ class Server {
 
     Server(config) {
         
-        jetty = new org.mortbay.jetty.Server(config.port as Integer)
-        webAppContext = new org.mortbay.jetty.webapp.WebAppContext()
+        jetty = new org.eclipse.jetty.server.Server(config.port as Integer)
+        webAppContext = new org.eclipse.jetty.webapp.WebAppContext()
 
         // session setup
-        def sessionManager = new org.mortbay.jetty.servlet.HashSessionManager()
-        webAppContext.sessionHandler = new org.mortbay.jetty.servlet.SessionHandler(sessionManager)
+        def sessionManager = new org.eclipse.jetty.server.session.HashSessionManager()
+        webAppContext.sessionHandler = new org.eclipse.jetty.server.session.SessionHandler(sessionManager)
         
-        jetty.addHandler(webAppContext)
+        jetty.setHandler(webAppContext)
 
         loadConfig(config)
 
@@ -66,7 +64,7 @@ class Server {
 
             def servlet = mapping.servlet
             if( servlet instanceof javax.servlet.Servlet ) {
-                servlet = new org.mortbay.jetty.servlet.ServletHolder(servlet)
+                servlet = new org.eclipse.jetty.servlet.ServletHolder(servlet)
                 println mapping
                 if( mapping.configBlock ) {
                     mapping.configBlock.delegate = servlet

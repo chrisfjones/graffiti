@@ -1,10 +1,12 @@
 package graffiti
 
 import javax.servlet.http.*
+import org.eclipse.jetty.websocket.WebSocketServlet
+import org.eclipse.jetty.websocket.WebSocket
 
-class GraffitiServlet extends HttpServlet {
+class GraffitiServlet extends WebSocketServlet {
 
-    def get, post, put, delete
+    def get, post, put, delete, webSocket
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         execute(request, response, get)
@@ -20,6 +22,13 @@ class GraffitiServlet extends HttpServlet {
 
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
         execute(request, response, delete)
+    }
+
+    WebSocket doWebSocketConnect(HttpServletRequest request, String s) {
+        WebContextHolder.instance.setup( request, null)
+        WebSocket output = webSocket()
+        WebContextHolder.instance.cleanup()
+        return output
     }
 
     private void execute(request, response, block) {

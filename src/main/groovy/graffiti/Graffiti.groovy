@@ -47,12 +47,17 @@ public class Graffiti {
                 if( dataSource ) {
                     config.datasources[dataSource.value()] = method.invoke(obj)
                 }
+
+                def webSocket = method.cachedMethod.getAnnotation(WebSocket)
+                if( webSocket ) {
+                    Graffiti.webSocket( webSocket.value(), { method.invoke(obj) } )
+                }
             }
         }
 
     }
 
-    public static serve(String path, servlet = org.mortbay.jetty.servlet.DefaultServlet, configBlock = null) {
+    public static serve(String path, servlet = org.eclipse.jetty.servlet.DefaultServlet, configBlock = null) {
         config.mappings << ['path': path, 'servlet': servlet, 'configBlock': configBlock]
     }
     
@@ -74,6 +79,10 @@ public class Graffiti {
 
     public static delete(path, block) {
         register('delete', path, block)
+    }
+
+    public static webSocket(path, block) {
+        register('webSocket', path, block)
     }
 
     public static start() {
